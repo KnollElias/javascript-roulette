@@ -1,5 +1,6 @@
 const timesFaster = 1;
 let bankValue = 1000;
+let lastbankValue = bankValue;
 let currentBet = 0;
 let wager = 5;
 let lastWager = 0;
@@ -657,8 +658,10 @@ function setBet(e, n, t, o) {
 }
 
 function spin() {
+  spinRunning = false;
   var winningSpin = Math.floor(Math.random() * 37);
   spinWheel(winningSpin);
+
   setTimeout(function () {
     if (numbersBet.includes(winningSpin)) {
       let winValue = 0;
@@ -672,13 +675,7 @@ function spin() {
         }
       }
       win(winningSpin, winValue, betTotal);
-      console.log("WOn");
-      // alert("WOn");
-      strategyTester("win");
-    } else {
-      console.log("lost");
-      // alert("lost");
-      strategyTester("lost");
+      // strategyTester("win");
     }
 
     currentBet = 0;
@@ -705,6 +702,15 @@ function spin() {
     wager = lastWager;
     if (bankValue == 0 && currentBet == 0) {
       gameOver();
+    }
+    console.log("lastbankValue", lastbankValue);
+    console.log("bankVlaue", bankValue);
+    if (bankValue > lastbankValue) {
+      console.warn("You won");
+      strategyTester("win");
+    } else {
+      console.warn("You lost");
+      strategyTester("lost");
     }
   }, 10000 / timesFaster);
 }
@@ -837,10 +843,12 @@ var initialFuckUpIndex = 1;
 var fuckedUpCount = 0;
 var fuckedUpIndex = initialFuckUpIndex;
 var initialGone = false;
+var spinRunning = false;
 function strategyTester(outcome) {
   roundCount++;
 
-  if (outcome == "win") {
+  if (outcome == "win" && !spinRunning) {
+    spinRunning = true;
     fuckedUpCount = 0;
     fuckedUpIndex = initialFuckUpIndex;
     openRound(
@@ -852,7 +860,8 @@ function strategyTester(outcome) {
       fuckedUpIndex
     );
   }
-  if (outcome == "lost") {
+  if (outcome == "lost" && !spinRunning) {
+    spinRunning = true;
     fuckedUpCount++;
     fuckedUpIndex = fuckedUpIndex * 2;
     if (fuckedUpCount <= 5) {
@@ -894,6 +903,7 @@ function openRound(
   var elements = document.querySelectorAll(".tt1_block"); // 1 - 34
   const initialIndex = fuckedUpIndex;
   var index = initialIndex;
+  const localBankValue = bankValue;
   while (index >= 1) {
     console.log("ClickRound");
     index--;
@@ -932,7 +942,7 @@ function openRound(
   if (outcome != undefined) {
     let theButton = document.querySelector(".spinBtn");
     theButton.click();
-    console.log("Clocked in the vztsad");
+    lastbankValue = localBankValue;
   } else {
     consol.log("OUTCOEM IS UNDEFINED");
   }
