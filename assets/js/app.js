@@ -1,3 +1,4 @@
+const timesFaster = 1;
 let bankValue = 1000;
 let currentBet = 0;
 let wager = 5;
@@ -671,7 +672,12 @@ function spin() {
         }
       }
       win(winningSpin, winValue, betTotal);
+      console.log("WOn");
+      // alert("WOn");
+      strategyTester("win");
     } else {
+      console.log("lost");
+      // alert("lost");
       strategyTester("lost");
     }
 
@@ -700,12 +706,10 @@ function spin() {
     if (bankValue == 0 && currentBet == 0) {
       gameOver();
     }
-  }, 10000);
+  }, 10000 / timesFaster);
 }
 
 function win(winningSpin, winValue, betTotal) {
-  strategyTester("win");
-
   if (winValue > 0) {
     let notification = document.createElement("div");
     notification.setAttribute("id", "notification");
@@ -742,10 +746,10 @@ function win(winningSpin, winValue, betTotal) {
     container.prepend(notification);
     setTimeout(function () {
       notification.style.cssText = "opacity:0";
-    }, 3000);
+    }, 3000 / timesFaster);
     setTimeout(function () {
       notification.remove();
-    }, 4000);
+    }, 4000 / timesFaster);
   }
 }
 
@@ -795,7 +799,6 @@ function spinWheel(winningSpin) {
   wheel.style.cssText = "animation: wheelRotate 5s linear infinite;";
   ballTrack.style.cssText = "animation: ballRotate 1s linear infinite;";
 
-  timesFaster = 1;
   setTimeout(function () {
     ballTrack.style.cssText = "animation: ballRotate 2s linear infinite;";
     style = document.createElement("style");
@@ -833,33 +836,60 @@ var roundCount = 0;
 var initialFuckUpIndex = 1;
 var fuckedUpCount = 0;
 var fuckedUpIndex = initialFuckUpIndex;
+var initialGone = false;
 function strategyTester(outcome) {
   roundCount++;
-  console.warn("roundCount: ", roundCount);
-  console.log(
-    "outcome: ",
-    outcome,
-    "bankValue: ",
-    bankValue,
-    "fuked Up count: ",
-    fuckedUpCount,
-    "fuckedUpIndex",
-    fuckedUpIndex
-  );
 
   if (outcome == "win") {
     fuckedUpCount = 0;
     fuckedUpIndex = initialFuckUpIndex;
+    openRound(
+      initialFuckUpIndex,
+      roundCount,
+      outcome,
+      bankValue,
+      fuckedUpCount,
+      fuckedUpIndex
+    );
   }
   if (outcome == "lost") {
     fuckedUpCount++;
     fuckedUpIndex = fuckedUpIndex * 2;
+    if (fuckedUpCount <= 5) {
+      console.error("GOING WITH FUCJEDUO IDNEX: ", fuckedUpIndex);
+      openRound(
+        initialFuckUpIndex,
+        roundCount,
+        outcome,
+        bankValue,
+        fuckedUpCount,
+        fuckedUpIndex
+      );
+    }
+  }
+  if (!initialGone) {
+    initialGone = true;
+    openRound(
+      initialFuckUpIndex,
+      roundCount,
+      outcome,
+      bankValue,
+      fuckedUpCount,
+      fuckedUpIndex
+    );
   }
 
-  openRound(fuckedUpIndex);
+  // openRound(fuckedUpIndex);
 }
 
-function openRound(fuckedUpIndex) {
+function openRound(
+  initialFuckUpIndex,
+  roundCount,
+  outcome,
+  bankValue,
+  fuckedUpCount,
+  fuckedUpIndex
+) {
   //set Bets
   var elements = document.querySelectorAll(".tt1_block"); // 1 - 34
   const initialIndex = fuckedUpIndex;
@@ -871,6 +901,17 @@ function openRound(fuckedUpIndex) {
     elements[2].click();
   }
 
+  console.warn("roundCount: ", roundCount);
+  console.log(
+    "outcome: ",
+    outcome,
+    "bankValue: ",
+    bankValue,
+    "fuked Up count: ",
+    fuckedUpCount,
+    "fuckedUpIndex",
+    fuckedUpIndex
+  );
   // var obj1 = {
   //   // 1 - 34
   //   amt: Ammount,
@@ -887,6 +928,13 @@ function openRound(fuckedUpIndex) {
   //   numbers: "2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35",
   // };
   // bet.push(obj2);
-  spin();
+  // alert("Sping?");
+  if (outcome != undefined) {
+    let theButton = document.querySelector(".spinBtn");
+    theButton.click();
+    console.log("Clocked in the vztsad");
+  } else {
+    consol.log("OUTCOEM IS UNDEFINED");
+  }
 }
 strategyTester("init");
