@@ -574,6 +574,11 @@ function clearBet() {
 }
 
 function setBet(e, n, t, o) {
+  // console.log("setBet", typeof e, typeof n, typeof t, typeof o);
+  // console.log("e ", e);
+  // console.log("n ", n);
+  // console.log("t ", t);
+  // console.log("o ", o);
   lastWager = wager;
   wager = bankValue < wager ? bankValue : wager;
   if (wager > 0) {
@@ -617,10 +622,10 @@ function setBet(e, n, t, o) {
       odds: o,
       numbers: n,
     };
-    console.log("amt", obj.amt);
-    console.log("type", obj.type);
-    console.log("odds", obj.odds);
-    console.log("numbers", obj.numbers);
+    // console.log("amt", obj.amt);
+    // console.log("type", obj.type);
+    // console.log("odds", obj.odds);
+    // console.log("numbers", obj.numbers);
     bet.push(obj);
 
     let numArray = n.split(",").map(Number);
@@ -790,6 +795,7 @@ function spinWheel(winningSpin) {
   wheel.style.cssText = "animation: wheelRotate 5s linear infinite;";
   ballTrack.style.cssText = "animation: ballRotate 1s linear infinite;";
 
+  timesFaster = 1;
   setTimeout(function () {
     ballTrack.style.cssText = "animation: ballRotate 2s linear infinite;";
     style = document.createElement("style");
@@ -799,17 +805,17 @@ function spinWheel(winningSpin) {
       degree +
       "deg);}}";
     document.head.appendChild(style);
-  }, 2000);
+  }, 2000 / timesFaster);
   setTimeout(function () {
     ballTrack.style.cssText = "animation: ballStop 3s linear;";
-  }, 6000);
+  }, 6000 / timesFaster);
   setTimeout(function () {
     ballTrack.style.cssText = "transform: rotate(-" + degree + "deg);";
-  }, 9000);
+  }, 9000 / timesFaster);
   setTimeout(function () {
     wheel.style.cssText = "";
     style.remove();
-  }, 10000);
+  }, 10000 / timesFaster);
 }
 
 function removeChips() {
@@ -822,10 +828,65 @@ function removeChips() {
   }
 }
 
+// Test Strategy
 var roundCount = 0;
+var initialFuckUpIndex = 1;
+var fuckedUpCount = 0;
+var fuckedUpIndex = initialFuckUpIndex;
 function strategyTester(outcome) {
-  console.log("outcome: ", outcome);
-  console.log("outcome: ", roundCount);
-  console.log("bankValue: ", bankValue);
   roundCount++;
+  console.warn("roundCount: ", roundCount);
+  console.log(
+    "outcome: ",
+    outcome,
+    "bankValue: ",
+    bankValue,
+    "fuked Up count: ",
+    fuckedUpCount,
+    "fuckedUpIndex",
+    fuckedUpIndex
+  );
+
+  if (outcome == "win") {
+    fuckedUpCount = 0;
+    fuckedUpIndex = initialFuckUpIndex;
+  }
+  if (outcome == "lost") {
+    fuckedUpCount++;
+    fuckedUpIndex = fuckedUpIndex * 2;
+  }
+
+  openRound(fuckedUpIndex);
 }
+
+function openRound(fuckedUpIndex) {
+  //set Bets
+  var elements = document.querySelectorAll(".tt1_block"); // 1 - 34
+  const initialIndex = fuckedUpIndex;
+  var index = initialIndex;
+  while (index >= 1) {
+    console.log("ClickRound");
+    index--;
+    elements[1].click();
+    elements[2].click();
+  }
+
+  // var obj1 = {
+  //   // 1 - 34
+  //   amt: Ammount,
+  //   type: "outside_column",
+  //   odds: 2,
+  //   numbers: "1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34",
+  // };
+  // bet.push(obj1);
+  // var obj2 = {
+  //   // 2 - 35
+  //   amt: Ammount,
+  //   type: "outside_column",
+  //   odds: 2,
+  //   numbers: "2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35",
+  // };
+  // bet.push(obj2);
+  spin();
+}
+strategyTester("init");
