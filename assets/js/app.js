@@ -617,6 +617,10 @@ function setBet(e, n, t, o) {
       odds: o,
       numbers: n,
     };
+    console.log("amt", obj.amt);
+    console.log("type", obj.type);
+    console.log("odds", obj.odds);
+    console.log("numbers", obj.numbers);
     bet.push(obj);
 
     let numArray = n.split(",").map(Number);
@@ -822,5 +826,6 @@ var roundCount = 0;
 function strategyTester(outcome) {
   console.log("outcome: ", outcome);
   console.log("outcome: ", roundCount);
+  console.log("bankValue: ", bankValue);
   roundCount++;
 }
