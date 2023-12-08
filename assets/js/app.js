@@ -1,4 +1,4 @@
-const timesFaster = 1;
+const timesFaster = 100;
 let bankValue = 1000;
 let lastbankValue = bankValue;
 let currentBet = 0;
@@ -703,13 +703,9 @@ function spin() {
     if (bankValue == 0 && currentBet == 0) {
       gameOver();
     }
-    console.log("lastbankValue", lastbankValue);
-    console.log("bankVlaue", bankValue);
     if (bankValue > lastbankValue) {
-      console.warn("You won");
       strategyTester("win");
     } else {
-      console.warn("You lost");
       strategyTester("lost");
     }
   }, 10000 / timesFaster);
@@ -847,7 +843,7 @@ var spinRunning = false;
 function strategyTester(outcome) {
   roundCount++;
 
-  if (outcome == "win" && !spinRunning) {
+  if (outcome == "win" && !spinRunning && roundCount < 10000) {
     spinRunning = true;
     fuckedUpCount = 0;
     fuckedUpIndex = initialFuckUpIndex;
@@ -863,9 +859,8 @@ function strategyTester(outcome) {
   if (outcome == "lost" && !spinRunning) {
     spinRunning = true;
     fuckedUpCount++;
-    fuckedUpIndex = fuckedUpIndex * 2;
+    fuckedUpIndex = fuckedUpIndex * 2 + 1;
     if (fuckedUpCount <= 5) {
-      console.error("GOING WITH FUCJEDUO IDNEX: ", fuckedUpIndex);
       openRound(
         initialFuckUpIndex,
         roundCount,
@@ -905,7 +900,6 @@ function openRound(
   var index = initialIndex;
   const localBankValue = bankValue;
   while (index >= 1) {
-    console.log("ClickRound");
     index--;
     elements[1].click();
     elements[2].click();
